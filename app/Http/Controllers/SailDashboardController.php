@@ -555,13 +555,33 @@ public function dashboard(): View
     }
 
     /**
-     * Determine whether Laravel Sail is being used.
+     * Determine whether the application is running inside Sail.
      */
     private function isSailEnvironment(): bool
     {
-        return env('LARAVEL_SAIL', false) === true
-            || env('LARAVEL_SAIL', false) === 'true'
-            || env('LARAVEL_SAIL', false) === '1';
+        return env('LARAVEL_SAIL') == 1 || isset($_ENV['LARAVEL_SAIL']);
+    }
+
+    /**
+     * Display live Interactive Docker Container Health & Telemetry Dashboard
+     */
+    public function containerHealth(): View
+    {
+        $healthService = new \App\Services\SailContainerHealthService();
+        $metrics = $healthService->getContainerHealthMetrics();
+        return view('sail.container-health', compact('metrics'));
+    }
+
+    /**
+     * Real-time JSON telemetry endpoint for container health
+     */
+    public function containerTelemetryJson(): \Illuminate\Http\JsonResponse
+    {
+        $healthService = new \App\Services\SailContainerHealthService();
+        return response()->json([
+            'status' => 'success',
+            'data' => $healthService->getContainerHealthMetrics(),
+        ]);
     }
 }
 

@@ -98,4 +98,42 @@ Route::prefix('sail')->name('sail.')->group(function () {
         SailDashboardController::class,
         'metrics'
     ])->name('metrics');
+
+    // 13. Interactive Live Docker Container Health Dashboard
+    Route::get('/container-health', [
+        SailDashboardController::class,
+        'containerHealth'
+    ])->name('container-health');
+
+    Route::get('/container-health/json', [
+        SailDashboardController::class,
+        'containerTelemetryJson'
+    ])->name('container-health.json');
+
+    // 14. Sail Volume Database Dump & Backup Exporter
+    Route::get('/backups', [
+        \App\Http\Controllers\SailBackupController::class,
+        'index'
+    ])->name('backups');
+
+    Route::post('/backups/create', [
+        \App\Http\Controllers\SailBackupController::class,
+        'create'
+    ])->name('backups.create');
+
+    Route::post('/backups/restore', [
+        \App\Http\Controllers\SailBackupController::class,
+        'restore'
+    ])->name('backups.restore');
+
+    Route::get('/backups/download/{filename}', [
+        \App\Http\Controllers\SailBackupController::class,
+        'download'
+    ])->name('backups.download');
+
+    Route::delete('/backups/delete/{filename}', [
+        \App\Http\Controllers\SailBackupController::class,
+        'delete'
+    ])->name('backups.delete');
 });
+
